@@ -2,65 +2,47 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Order fresh food from popular local restaurants with FoodExpress.">
+    <meta name="theme-color" content="#ff5722">
 
     <title>FoodExpress - Online Food Delivery</title>
 
     <link rel="stylesheet" href="style.css">
-
 </head>
 
 <body>
 
-
-<!-- =====================================================
-     NAVIGATION BAR
-===================================================== -->
+<!-- ================= NAVBAR ================= -->
 
 <header class="navbar">
 
-    <div class="logo">
-        🍴 FoodExpress
-    </div>
+    <a class="logo" href="#home" aria-label="FoodExpress home">
+        🍴 FoodExpress <span aria-hidden="true">🍕</span>
+    </a>
 
     <nav class="nav-links">
-
         <a href="#home">Home</a>
-
         <a href="#categories">Categories</a>
-
         <a href="#restaurants">Restaurants</a>
-
         <a href="#products">Food</a>
-
         <a href="#offers">Offers</a>
-
         <a href="#tracking">Track Order</a>
-
     </nav>
 
     <div class="nav-actions">
+        <button type="button" class="login-btn">Login</button>
 
-        <button class="login-btn">
-            Login
+        <button type="button" class="cart-btn" aria-label="Open cart, 0 items">
+            🛒 Cart (<span id="cartCount" aria-live="polite">0</span>)
         </button>
-
-        <button class="cart-btn">
-            🛒 Cart (0)
-        </button>
-
     </div>
 
 </header>
 
 
-<!-- =====================================================
-     HERO SECTION
-===================================================== -->
+<!-- ================= HERO ================= -->
 
 <section class="hero" id="home">
 
@@ -70,18 +52,55 @@
             🚀 Fast & Fresh Delivery
         </span>
 
+        <!-- LOCATION -->
+
+        <div class="location-box">
+
+            <span>📍</span>
+
+            <input
+                type="text"
+                id="locationInput"
+                placeholder="Enter your delivery location"
+                aria-label="Delivery location"
+                autocomplete="street-address"
+            >
+
+            <button type="button" id="locationButton">
+                Use Current Location
+            </button>
+
+        </div>
+
+
+        <!-- HERO SEARCH -->
+
+        <div class="hero-search">
+
+            <input
+                type="text"
+                id="heroSearchInput"
+                placeholder="🔎 Search for food or restaurant..."
+                aria-label="Search for food or a restaurant"
+            >
+
+            <button type="button" id="heroSearchButton">
+                Search
+            </button>
+
+        </div>
+
+
         <h1>
             Delicious Food
             <span>Delivered Fast</span>
         </h1>
 
         <p>
-            Order your favourite meals from the best
-            restaurants near you.
+            Order your favourite meals from the best restaurants near you.
         </p>
 
-        <a href="#products"
-           class="hero-button">
+        <a href="#products" class="hero-button">
             Order Now 🍔
         </a>
 
@@ -94,7 +113,8 @@
 
             <img
                 src="https://images.unsplash.com/photo-1565299507177-b0ac66763828?auto=format&fit=crop&w=900&q=80"
-                alt="Delicious food">
+                alt="Delicious food"
+            >
 
         </div>
 
@@ -103,20 +123,15 @@
 </section>
 
 
-<!-- =====================================================
-     FOOD CATEGORIES
-===================================================== -->
+<!-- ================= CATEGORIES ================= -->
 
-<section class="section"
-         id="categories">
+<section class="section" id="categories">
 
     <div class="section-title">
 
         <span>Explore</span>
 
-        <h2>
-            Food Categories
-        </h2>
+        <h2>Food Categories</h2>
 
         <p>
             Choose what you are craving today.
@@ -127,124 +142,55 @@
 
     <div class="category-grid">
 
-
-        <div class="category-card selected"
-             data-category="all">
-
-            <div class="category-icon">
-                🍽️
-            </div>
-
-            <h3>
-                All Food
-            </h3>
-
+        <div class="category-card selected" data-category="all">
+            <div class="category-icon">🍽️</div>
+            <h3>All Food</h3>
         </div>
 
-
-        <div class="category-card"
-             data-category="pizza">
-
-            <div class="category-icon">
-                🍕
-            </div>
-
-            <h3>
-                Pizza
-            </h3>
-
+        <div class="category-card" data-category="pizza">
+            <div class="category-icon">🍕</div>
+            <h3>Pizza</h3>
         </div>
 
-
-        <div class="category-card"
-             data-category="burger">
-
-            <div class="category-icon">
-                🍔
-            </div>
-
-            <h3>
-                Burgers
-            </h3>
-
+        <div class="category-card" data-category="burger">
+            <div class="category-icon">🍔</div>
+            <h3>Burgers</h3>
         </div>
 
-
-        <div class="category-card"
-             data-category="noodles">
-
-            <div class="category-icon">
-                🍜
-            </div>
-
-            <h3>
-                Noodles
-            </h3>
-
+        <div class="category-card" data-category="noodles">
+            <div class="category-icon">🍜</div>
+            <h3>Noodles</h3>
         </div>
 
-
-        <div class="category-card"
-             data-category="biryani">
-
-            <div class="category-icon">
-                🍛
-            </div>
-
-            <h3>
-                Biryani
-            </h3>
-
+        <div class="category-card" data-category="biryani">
+            <div class="category-icon">🍛</div>
+            <h3>Biryani</h3>
         </div>
 
-
-        <div class="category-card"
-             data-category="mexican">
-
-            <div class="category-icon">
-                🌮
-            </div>
-
-            <h3>
-                Mexican
-            </h3>
-
+        <div class="category-card" data-category="mexican">
+            <div class="category-icon">🌮</div>
+            <h3>Mexican</h3>
         </div>
 
-
-        <div class="category-card"
-             data-category="dessert">
-
-            <div class="category-icon">
-                🍰
-            </div>
-
-            <h3>
-                Desserts
-            </h3>
-
+        <div class="category-card" data-category="dessert">
+            <div class="category-icon">🍰</div>
+            <h3>Desserts</h3>
         </div>
-
 
     </div>
 
 </section>
 
 
-<!-- =====================================================
-     RESTAURANTS
-===================================================== -->
+<!-- ================= RESTAURANTS ================= -->
 
-<section class="section restaurants-section"
-         id="restaurants">
+<section class="section restaurants-section" id="restaurants">
 
     <div class="section-title">
 
         <span>Popular</span>
 
-        <h2>
-            Top Restaurants
-        </h2>
+        <h2>Top Restaurants</h2>
 
         <p>
             Discover popular restaurants around you.
@@ -255,7 +201,6 @@
 
     <div class="restaurant-grid">
 
-
         <div class="restaurant-card">
 
             <div class="restaurant-icon">
@@ -263,19 +208,9 @@
             </div>
 
             <div>
-
-                <h3>
-                    Spice Kitchen
-                </h3>
-
-                <p>
-                    ⭐ 4.8 • Indian Cuisine
-                </p>
-
-                <span>
-                    25-30 min
-                </span>
-
+                <h3>Spice Kitchen</h3>
+                <p>⭐ 4.8 • Indian Cuisine</p>
+                <span>25-30 min</span>
             </div>
 
         </div>
@@ -288,19 +223,9 @@
             </div>
 
             <div>
-
-                <h3>
-                    Burger House
-                </h3>
-
-                <p>
-                    ⭐ 4.7 • Fast Food
-                </p>
-
-                <span>
-                    20-25 min
-                </span>
-
+                <h3>Burger House</h3>
+                <p>⭐ 4.7 • Fast Food</p>
+                <span>20-25 min</span>
             </div>
 
         </div>
@@ -313,44 +238,27 @@
             </div>
 
             <div>
-
-                <h3>
-                    Pizza Corner
-                </h3>
-
-                <p>
-                    ⭐ 4.9 • Italian
-                </p>
-
-                <span>
-                    25-35 min
-                </span>
-
+                <h3>Pizza Corner</h3>
+                <p>⭐ 4.9 • Italian</p>
+                <span>25-35 min</span>
             </div>
 
         </div>
-
 
     </div>
 
 </section>
 
 
-<!-- =====================================================
-     FOOD SECTION
-===================================================== -->
+<!-- ================= FOOD ================= -->
 
-<section class="section"
-         id="products">
-
+<section class="section" id="products">
 
     <div class="section-title">
 
         <span>Our Menu</span>
 
-        <h2>
-            Popular Food
-        </h2>
+        <h2>Popular Food</h2>
 
         <p>
             Fresh and delicious food delivered to your door.
@@ -359,25 +267,22 @@
     </div>
 
 
-    <!-- SEARCH -->
+    <!-- FOOD SEARCH -->
 
     <div class="search-container">
 
         <input
             type="text"
             id="searchInput"
-            placeholder="Search for food or restaurant...">
+            placeholder="Search for food..."
+            aria-label="Search menu"
+        >
 
-        <button id="searchButton">
+        <button type="button" id="searchButton">
             🔍 Search
         </button>
 
     </div>
-
-
-    <!-- =================================================
-         FOOD CARDS
-    ================================================= -->
 
 
     <div class="product-grid">
@@ -385,17 +290,16 @@
 
         <!-- PIZZA -->
 
-        <div class="product-card"
-             data-category="pizza">
+        <div class="product-card" data-category="pizza">
 
             <div class="food-image">
 
                 <img
                     src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=800&q=80"
-                    alt="Cheese Pizza">
+                    alt="Cheese Pizza"
+                >
 
             </div>
-
 
             <div class="product-content">
 
@@ -403,22 +307,21 @@
                     Bestseller
                 </span>
 
-                <h3>
-                    Cheese Pizza
-                </h3>
+                <h3>Cheese Pizza</h3>
 
                 <p>
                     Cheesy pizza with fresh vegetables.
                 </p>
 
-
                 <div class="product-bottom">
 
-                    <strong>
-                        ₹249
-                    </strong>
+                    <strong>₹249</strong>
 
-                    <button class="add-cart">
+                    <button
+                        class="add-cart"
+                        data-name="Cheese Pizza"
+                        data-price="249"
+                    >
                         Add to Cart
                     </button>
 
@@ -431,17 +334,16 @@
 
         <!-- BURGER -->
 
-        <div class="product-card"
-             data-category="burger">
+        <div class="product-card" data-category="burger">
 
             <div class="food-image">
 
                 <img
                     src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=80"
-                    alt="Classic Burger">
+                    alt="Classic Burger"
+                >
 
             </div>
-
 
             <div class="product-content">
 
@@ -449,22 +351,21 @@
                     Popular
                 </span>
 
-                <h3>
-                    Classic Burger
-                </h3>
+                <h3>Classic Burger</h3>
 
                 <p>
                     Crispy burger with cheese and vegetables.
                 </p>
 
-
                 <div class="product-bottom">
 
-                    <strong>
-                        ₹199
-                    </strong>
+                    <strong>₹199</strong>
 
-                    <button class="add-cart">
+                    <button
+                        class="add-cart"
+                        data-name="Classic Burger"
+                        data-price="199"
+                    >
                         Add to Cart
                     </button>
 
@@ -477,17 +378,16 @@
 
         <!-- NOODLES -->
 
-        <div class="product-card"
-             data-category="noodles">
+        <div class="product-card" data-category="noodles">
 
             <div class="food-image">
 
                 <img
                     src="https://images.unsplash.com/photo-1552611052-33e04de081de?auto=format&fit=crop&w=800&q=80"
-                    alt="Veg Noodles">
+                    alt="Veg Noodles"
+                >
 
             </div>
-
 
             <div class="product-content">
 
@@ -495,22 +395,21 @@
                     Fresh
                 </span>
 
-                <h3>
-                    Veg Noodles
-                </h3>
+                <h3>Veg Noodles</h3>
 
                 <p>
                     Delicious noodles with fresh vegetables.
                 </p>
 
-
                 <div class="product-bottom">
 
-                    <strong>
-                        ₹179
-                    </strong>
+                    <strong>₹179</strong>
 
-                    <button class="add-cart">
+                    <button
+                        class="add-cart"
+                        data-name="Veg Noodles"
+                        data-price="179"
+                    >
                         Add to Cart
                     </button>
 
@@ -521,18 +420,18 @@
         </div>
 
 
-        <!-- BIRYANI -->
+        <!-- VEG BIRYANI -->
 
-        <div class="product-card"
-             data-category="biryani">
+        <div class="product-card" data-category="biryani">
 
             <div class="food-image">
 
                 <img
-                  src="https://cdn.shopify.com/s/files/1/0782/6161/6962/files/Untitled_design_95_480x480.jpg?v=1730966922" 
-                  alt="Veg Biryani">
-            </div>
+                    src="https://cdn.shopify.com/s/files/1/0782/6161/6962/files/Untitled_design_95_480x480.jpg?v=1730966922"
+                    alt="Veg Biryani"
+                >
 
+            </div>
 
             <div class="product-content">
 
@@ -540,22 +439,21 @@
                     Special
                 </span>
 
-                <h3>
-                    Veg Biryani
-                </h3>
+                <h3>Veg Biryani</h3>
 
                 <p>
-                    Aromatic rice cooked with spices and vegetables.
+                    Aromatic basmati rice cooked with fresh vegetables and spices.
                 </p>
-
 
                 <div class="product-bottom">
 
-                    <strong>
-                        ₹229
-                    </strong>
+                    <strong>₹229</strong>
 
-                    <button class="add-cart">
+                    <button
+                        class="add-cart"
+                        data-name="Veg Biryani"
+                        data-price="229"
+                    >
                         Add to Cart
                     </button>
 
@@ -566,19 +464,18 @@
         </div>
 
 
-        <!-- MEXICAN TACO -->
+        <!-- MEXICAN -->
 
-        <div class="product-card"
-             data-category="mexican">
+        <div class="product-card" data-category="mexican">
 
             <div class="food-image">
 
                 <img
                     src="https://images.unsplash.com/photo-1552332386-f8dd00dc2f85?auto=format&fit=crop&w=800&q=80"
-                    alt="Mexican Taco">
+                    alt="Mexican Taco"
+                >
 
             </div>
-
 
             <div class="product-content">
 
@@ -586,22 +483,21 @@
                     Trending
                 </span>
 
-                <h3>
-                    Mexican Taco
-                </h3>
+                <h3>Mexican Taco</h3>
 
                 <p>
                     Spicy Mexican taco with fresh fillings.
                 </p>
 
-
                 <div class="product-bottom">
 
-                    <strong>
-                        ₹159
-                    </strong>
+                    <strong>₹159</strong>
 
-                    <button class="add-cart">
+                    <button
+                        class="add-cart"
+                        data-name="Mexican Taco"
+                        data-price="159"
+                    >
                         Add to Cart
                     </button>
 
@@ -612,19 +508,18 @@
         </div>
 
 
-        <!-- CHOCOLATE CAKE -->
+        <!-- CAKE -->
 
-        <div class="product-card"
-             data-category="dessert">
+        <div class="product-card" data-category="dessert">
 
             <div class="food-image">
 
                 <img
                     src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80"
-                    alt="Chocolate Cake">
+                    alt="Chocolate Cake"
+                >
 
             </div>
-
 
             <div class="product-content">
 
@@ -632,22 +527,21 @@
                     Dessert
                 </span>
 
-                <h3>
-                    Chocolate Cake
-                </h3>
+                <h3>Chocolate Cake</h3>
 
                 <p>
                     Soft and delicious chocolate cake.
                 </p>
 
-
                 <div class="product-bottom">
 
-                    <strong>
-                        ₹149
-                    </strong>
+                    <strong>₹149</strong>
 
-                    <button class="add-cart">
+                    <button
+                        class="add-cart"
+                        data-name="Chocolate Cake"
+                        data-price="149"
+                    >
                         Add to Cart
                     </button>
 
@@ -657,18 +551,14 @@
 
         </div>
 
-
     </div>
 
 </section>
 
 
-<!-- =====================================================
-     OFFER SECTION
-===================================================== -->
+<!-- ================= OFFER ================= -->
 
-<section class="offer-section"
-         id="offers">
+<section class="offer-section" id="offers">
 
     <div class="offer-content">
 
@@ -686,7 +576,7 @@
             on your next order.
         </p>
 
-        <button class="offer-button">
+        <button type="button" class="offer-button">
             Order Now
         </button>
 
@@ -695,22 +585,15 @@
 </section>
 
 
-<!-- =====================================================
-     ORDER TRACKING
-===================================================== -->
+<!-- ================= TRACKING ================= -->
 
-<section class="section tracking-section"
-         id="tracking">
+<section class="section tracking-section" id="tracking">
 
     <div class="section-title">
 
-        <span>
-            Live Update
-        </span>
+        <span>Live Update</span>
 
-        <h2>
-            Track Your Order
-        </h2>
+        <h2>Track Your Order</h2>
 
         <p>
             Follow your food from restaurant to your door.
@@ -721,19 +604,13 @@
 
     <div class="tracking-container">
 
-
-        <!-- STEP 1 -->
-
-        <div class="tracking-step active"
-             id="step1">
+        <div class="tracking-step active" id="step1">
 
             <div class="tracking-icon">
                 📋
             </div>
 
-            <h3>
-                Order Placed
-            </h3>
+            <h3>Order Placed</h3>
 
             <p id="time1">
                 Waiting
@@ -742,23 +619,16 @@
         </div>
 
 
-        <div class="tracking-line"
-             id="line1">
-        </div>
+        <div class="tracking-line" id="line1"></div>
 
 
-        <!-- STEP 2 -->
-
-        <div class="tracking-step"
-             id="step2">
+        <div class="tracking-step" id="step2">
 
             <div class="tracking-icon">
                 👨‍🍳
             </div>
 
-            <h3>
-                Preparing
-            </h3>
+            <h3>Preparing</h3>
 
             <p id="time2">
                 Waiting
@@ -767,23 +637,16 @@
         </div>
 
 
-        <div class="tracking-line"
-             id="line2">
-        </div>
+        <div class="tracking-line" id="line2"></div>
 
 
-        <!-- STEP 3 -->
-
-        <div class="tracking-step"
-             id="step3">
+        <div class="tracking-step" id="step3">
 
             <div class="tracking-icon">
                 🛵
             </div>
 
-            <h3>
-                On the Way
-            </h3>
+            <h3>On the Way</h3>
 
             <p id="time3">
                 Waiting
@@ -792,23 +655,16 @@
         </div>
 
 
-        <div class="tracking-line"
-             id="line3">
-        </div>
+        <div class="tracking-line" id="line3"></div>
 
 
-        <!-- STEP 4 -->
-
-        <div class="tracking-step"
-             id="step4">
+        <div class="tracking-step" id="step4">
 
             <div class="tracking-icon">
                 🏠
             </div>
 
-            <h3>
-                Delivered
-            </h3>
+            <h3>Delivered</h3>
 
             <p id="time4">
                 Waiting
@@ -816,29 +672,24 @@
 
         </div>
 
-
     </div>
 
 
-    <div class="tracking-message"
-         id="trackingMessage">
-
+    <div
+        class="tracking-message"
+        id="trackingMessage"
+    >
         📋 Your order has been placed!
-
     </div>
 
 </section>
 
 
-<!-- =====================================================
-     FOOTER
-===================================================== -->
+<!-- ================= FOOTER ================= -->
 
 <footer class="footer">
 
-
     <div class="footer-content">
-
 
         <div>
 
@@ -859,21 +710,10 @@
                 Quick Links
             </h3>
 
-            <a href="#home">
-                Home
-            </a>
-
-            <a href="#products">
-                Food
-            </a>
-
-            <a href="#offers">
-                Offers
-            </a>
-
-            <a href="#tracking">
-                Track Order
-            </a>
+            <a href="#home">Home</a>
+            <a href="#products">Food</a>
+            <a href="#offers">Offers</a>
+            <a href="#tracking">Track Order</a>
 
         </div>
 
@@ -894,36 +734,29 @@
 
         </div>
 
-
     </div>
 
 
     <div class="footer-bottom">
 
-        © 2026 FoodExpress.
-        All Rights Reserved.
+        © 2026 FoodExpress. All Rights Reserved.
 
     </div>
 
 </footer>
 
 
-<!-- =====================================================
-     LOGIN POPUP
-===================================================== -->
+<!-- ================= LOGIN ================= -->
 
-<div class="login-overlay">
-
+<div class="login-overlay" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
 
     <div class="login-box">
 
-
-        <button class="close-login">
+        <button type="button" class="close-login" aria-label="Close login dialog">
             ✕
         </button>
 
-
-        <h2>
+        <h2 id="loginTitle">
             Welcome Back 👋
         </h2>
 
@@ -934,29 +767,26 @@
 
         <form id="loginForm">
 
-
             <input
                 type="email"
                 id="email"
                 placeholder="Email address"
-                required>
-
+                required
+            >
 
             <input
                 type="password"
                 id="password"
                 placeholder="Password"
-                required>
-
+                required
+            >
 
             <button
                 type="submit"
-                class="form-button">
-
+                class="form-button"
+            >
                 Login
-
             </button>
-
 
         </form>
 
@@ -965,37 +795,31 @@
 
             Don't have an account?
 
-            <a href="#"
-               class="signup-link">
-
+            <a
+                href="#"
+                class="signup-link"
+            >
                 Sign Up
-
             </a>
 
         </p>
-
 
     </div>
 
 </div>
 
 
-<!-- =====================================================
-     SIGN UP POPUP
-===================================================== -->
+<!-- ================= SIGN UP ================= -->
 
-<div class="signup-overlay">
-
+<div class="signup-overlay" role="dialog" aria-modal="true" aria-labelledby="signupTitle">
 
     <div class="signup-box">
 
-
-        <button class="close-signup">
+        <button type="button" class="close-signup" aria-label="Close sign-up dialog">
             ✕
         </button>
 
-
-        <h2>
+        <h2 id="signupTitle">
             Create Account 📝
         </h2>
 
@@ -1006,43 +830,40 @@
 
         <form id="signupForm">
 
-
             <input
                 type="text"
                 id="signupName"
                 placeholder="Full name"
-                required>
-
+                required
+            >
 
             <input
                 type="email"
                 id="signupEmail"
                 placeholder="Email address"
-                required>
-
+                required
+            >
 
             <input
                 type="password"
                 id="signupPassword"
                 placeholder="Password"
-                required>
-
+                required
+            >
 
             <input
                 type="password"
                 id="confirmPassword"
                 placeholder="Confirm password"
-                required>
-
+                required
+            >
 
             <button
                 type="submit"
-                class="form-button">
-
+                class="form-button"
+            >
                 Create Account
-
             </button>
-
 
         </form>
 
@@ -1051,35 +872,26 @@
 
             Already have an account?
 
-            <a href="#"
-               class="back-to-login">
-
+            <a
+                href="#"
+                class="back-to-login"
+            >
                 Login
-
             </a>
 
         </p>
-
 
     </div>
 
 </div>
 
 
-<!-- =====================================================
-     CART OVERLAY
-===================================================== -->
+<!-- ================= CART ================= -->
 
-<div class="cart-overlay">
-</div>
+<div class="cart-overlay" aria-hidden="true"></div>
 
 
-<!-- =====================================================
-     CART PANEL
-===================================================== -->
-
-<div class="cart-panel">
-
+<aside class="cart-panel" aria-label="Shopping cart" aria-hidden="true">
 
     <div class="cart-header">
 
@@ -1087,20 +899,17 @@
             🛒 Your Cart
         </h2>
 
-
-        <button class="close-cart">
+        <button type="button" class="close-cart" aria-label="Close cart">
             ✕
         </button>
 
     </div>
 
 
-    <div class="cart-items">
-    </div>
+    <div class="cart-items" aria-live="polite"></div>
 
 
     <div class="cart-footer">
-
 
         <div class="cart-total">
 
@@ -1115,40 +924,31 @@
         </div>
 
 
-        <button class="checkout-btn">
-
+        <button type="button" class="checkout-btn">
             Proceed to Checkout
-
         </button>
-
 
     </div>
 
-</div>
+</aside>
 
 
-<!-- =====================================================
-     CHECKOUT POPUP
-===================================================== -->
+<!-- ================= CHECKOUT ================= -->
 
-<div class="checkout-overlay">
-
+<div class="checkout-overlay" role="dialog" aria-modal="true" aria-labelledby="checkoutTitle">
 
     <div class="checkout-box">
 
-
-        <button class="close-checkout">
+        <button type="button" class="close-checkout" aria-label="Close checkout dialog">
             ✕
         </button>
 
-
-        <h2>
+        <h2 id="checkoutTitle">
             Checkout 💳
         </h2>
 
 
-        <div class="checkout-items">
-        </div>
+        <div class="checkout-items"></div>
 
 
         <div class="checkout-total">
@@ -1166,26 +966,26 @@
 
         <form id="checkoutForm">
 
-
             <input
                 type="text"
                 id="customerName"
                 placeholder="Full Name"
-                required>
-
+                required
+            >
 
             <input
                 type="tel"
                 id="customerPhone"
                 placeholder="Phone Number"
-                required>
-
+                required
+            >
 
             <input
                 type="text"
                 id="city"
-                placeholder="City / Address"
-                required>
+                placeholder="City / Delivery Address"
+                required
+            >
 
 
             <h3>
@@ -1199,7 +999,8 @@
                     type="radio"
                     name="payment"
                     value="Cash on Delivery"
-                    checked>
+                    checked
+                >
 
                 Cash on Delivery
 
@@ -1211,7 +1012,8 @@
                 <input
                     type="radio"
                     name="payment"
-                    value="UPI">
+                    value="UPI"
+                >
 
                 UPI
 
@@ -1223,7 +1025,8 @@
                 <input
                     type="radio"
                     name="payment"
-                    value="Card">
+                    value="Card"
+                >
 
                 Credit / Debit Card
 
@@ -1232,28 +1035,20 @@
 
             <button
                 type="submit"
-                class="place-order-btn">
-
+                class="place-order-btn"
+            >
                 Place Order 🚀
-
             </button>
 
-
         </form>
-
 
     </div>
 
 </div>
 
 
-<!-- =====================================================
-     JAVASCRIPT
-===================================================== -->
-
 <script src="script.js"></script>
-
 
 </body>
 
-</html> 
+</html>

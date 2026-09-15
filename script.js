@@ -7,20 +7,18 @@
    CART
 ===================================================== */
 
-let cart = [];
+let cart = loadCart();
+let trackingTimers = [];
 
+const cartCount = document.getElementById("cartCount");
 
-const cartButton =
-    document.querySelector(".cart-btn");
+const cartButton = document.querySelector(".cart-btn");
 
-const cartPanel =
-    document.querySelector(".cart-panel");
+const cartPanel = document.querySelector(".cart-panel");
 
-const cartOverlay =
-    document.querySelector(".cart-overlay");
+const cartOverlay = document.querySelector(".cart-overlay");
 
-const closeCartButton =
-    document.querySelector(".close-cart");
+const closeCartButton = document.querySelector(".close-cart");
 
 const cartItemsContainer =
     document.querySelector(".cart-items");
@@ -28,70 +26,124 @@ const cartItemsContainer =
 const cartTotal =
     document.querySelector(".cart-total strong");
 
-const addButtons =
+
+/* OPEN CART */
+
+cartButton.addEventListener("click", function () {
+
+    cartPanel.classList.add("open");
+
+    cartOverlay.style.display = "block";
+
+    updateCart();
+
+});
+
+
+/* CLOSE CART */
+
+closeCartButton.addEventListener("click", closeCart);
+
+cartOverlay.addEventListener("click", closeCart);
+
+
+function closeCart() {
+
+    cartPanel.classList.remove("open");
+
+    cartOverlay.style.display = "none";
+
+    cartPanel.setAttribute("aria-hidden", "true");
+
+}
+
+
+function openCart() {
+
+    cartPanel.classList.add("open");
+
+    cartOverlay.style.display = "block";
+
+    cartPanel.setAttribute("aria-hidden", "false");
+
+    updateCart();
+
+}
+
+
+function loadCart() {
+
+    try {
+
+        const savedCart = JSON.parse(localStorage.getItem("foodExpressCart"));
+
+        if (!Array.isArray(savedCart)) {
+
+            return [];
+
+        }
+
+        return savedCart.filter(function (item) {
+
+            return item &&
+                typeof item.name === "string" &&
+                Number.isFinite(item.price) &&
+                Number.isInteger(item.quantity) &&
+                item.quantity > 0;
+
+        });
+
+    } catch (error) {
+
+        return [];
+
+    }
+
+}
+
+
+function saveCart() {
+
+    localStorage.setItem("foodExpressCart", JSON.stringify(cart));
+
+}
+
+
+/* ADD TO CART */
+
+const addCartButtons =
     document.querySelectorAll(".add-cart");
 
 
+addCartButtons.forEach(function (button) {
 
-/* =====================================================
-   ADD FOOD TO CART
-===================================================== */
-
-addButtons.forEach(function(button) {
-
-    button.addEventListener("click", function() {
-
-
-        const product =
-            button.closest(".product-card");
-
+    button.addEventListener("click", function () {
 
         const name =
-            product.querySelector("h3")
-            .textContent
-            .trim();
-
+            button.getAttribute("data-name");
 
         const price =
-            parseInt(
-                product.querySelector(
-                    ".product-bottom strong"
-                ).textContent.replace("₹", "")
-            );
+            Number(button.getAttribute("data-price"));
 
 
-        const image =
-            product.querySelector(
-                ".food-image"
-            ).textContent.trim();
-
-
-
-        const existingProduct =
-            cart.find(function(item) {
+        const existingItem =
+            cart.find(function (item) {
 
                 return item.name === name;
 
             });
 
 
+        if (existingItem) {
 
-        if (existingProduct) {
-
-            existingProduct.quantity++;
+            existingItem.quantity++;
 
         } else {
 
             cart.push({
-
                 name: name,
-
                 price: price,
-
-                image: image,
-
                 quantity: 1
-
             });
 
         }
@@ -99,17 +151,16 @@ addButtons.forEach(function(button) {
 
         updateCart();
 
-        openCart();
+        cartPanel.classList.add("open");
+
+        cartOverlay.style.display = "block";
 
     });
 
 });
 
 
-
-/* =====================================================
-   UPDATE CART
-===================================================== */
+/* UPDATE CART */
 
 function updateCart() {
 
@@ -117,98 +168,56 @@ function updateCart() {
 
     let total = 0;
 
-    let totalItems = 0;
+    let count = 0;
 
 
     if (cart.length === 0) {
 
-        cartItemsContainer.innerHTML = `
-
-            <p class="empty-cart">
-                Your cart is empty.
-            </p>
-
-        `;
+        cartItemsContainer.innerHTML =
+            "<p>Your cart is empty 🛒</p>";
 
     }
 
 
-    cart.forEach(function(item, index) {
+    cart.forEach(function (item, index) {
 
-
-        const subtotal =
+        total +=
             item.price * item.quantity;
 
-
-        total += subtotal;
-
-        totalItems += item.quantity;
-
+        count += item.quantity;
 
 
         const cartItem =
             document.createElement("div");
 
-
-        cartItem.className =
-            "cart-item";
+        cartItem.className = "cart-item";
 
 
         cartItem.innerHTML = `
 
-            <div class="cart-item-image">
-                ${item.image}
-            </div>
-
-
             <div class="cart-item-info">
 
-                <h4>
-                    ${item.name}
-                </h4>
+                <h4>${item.name}</h4>
 
-                <p>
-                    ₹${item.price} each
-                </p>
-
-
-                <div class="quantity-controls">
-
-                    <button
-                        class="quantity-minus"
-                        data-index="${index}">
-                        −
-                    </button>
-
-
-                    <span>
-                        ${item.quantity}
-                    </span>
-
-
-                    <button
-                        class="quantity-plus"
-                        data-index="${index}">
-                        +
-                    </button>
-
-                </div>
-
-
-                <strong class="item-subtotal">
-                    ₹${subtotal}
-                </strong>
+                <p>₹${item.price * item.quantity}</p>
 
             </div>
 
+            <div class="quantity-controls">
 
-            <button
-                class="remove-item"
-                data-index="${index}">
+                <button onclick="changeQuantity(${index}, -1)">
+                    −
+                </button>
 
-                ✕
+                <span>
+                    ${item.quantity}
+                </span>
 
-            </button>
+                <button onclick="changeQuantity(${index}, 1)">
+                    +
+                </button>
+
+            </div>
 
         `;
 
@@ -218,162 +227,303 @@ function updateCart() {
     });
 
 
-    cartButton.textContent =
-        `🛒 Cart (${totalItems})`;
-
+    cartCount.textContent = count;
 
     cartTotal.textContent =
-        `₹${total}`;
-
-
-    addQuantityEvents();
+        "₹" + total;
 
 }
 
+
+/* CHANGE QUANTITY */
+
+function changeQuantity(index, change) {
+
+    cart[index].quantity += change;
+
+
+    if (cart[index].quantity <= 0) {
+
+        cart.splice(index, 1);
+
+    }
+
+
+    updateCart();
+
+}
 
 
 /* =====================================================
-   CART QUANTITY
+   CHECKOUT
 ===================================================== */
 
-function addQuantityEvents() {
+const checkoutButton =
+    document.querySelector(".checkout-btn");
+
+const checkoutOverlay =
+    document.querySelector(".checkout-overlay");
+
+const closeCheckout =
+    document.querySelector(".close-checkout");
+
+const checkoutItems =
+    document.querySelector(".checkout-items");
+
+const checkoutTotal =
+    document.querySelector(".checkout-total strong");
 
 
-    document
-        .querySelectorAll(".quantity-minus")
-        .forEach(function(button) {
+checkoutButton.addEventListener("click", function () {
+
+    if (cart.length === 0) {
+
+        alert("Your cart is empty. Add some food first! 🍔");
+
+        return;
+
+    }
 
 
-            button.addEventListener(
-                "click",
-                function() {
+    updateCheckout();
+
+    checkoutOverlay.style.display = "flex";
+
+});
 
 
-                    const index =
-                        parseInt(
-                            button.dataset.index
-                        );
+closeCheckout.addEventListener("click", function () {
+
+    checkoutOverlay.style.display = "none";
+
+});
 
 
-                    if (
-                        cart[index].quantity > 1
-                    ) {
+/* UPDATE CHECKOUT */
 
-                        cart[index].quantity--;
+function updateCheckout() {
 
-                    } else {
+    checkoutItems.innerHTML = "";
 
-                        cart.splice(index, 1);
-
-                    }
+    let total = 0;
 
 
-                    updateCart();
+    cart.forEach(function (item) {
 
-                }
-            );
+        const itemTotal =
+            item.price * item.quantity;
 
-        });
-
-
-
-    document
-        .querySelectorAll(".quantity-plus")
-        .forEach(function(button) {
+        total += itemTotal;
 
 
-            button.addEventListener(
-                "click",
-                function() {
+        const checkoutItem =
+            document.createElement("div");
+
+        checkoutItem.className =
+            "checkout-item";
 
 
-                    const index =
-                        parseInt(
-                            button.dataset.index
-                        );
+        checkoutItem.innerHTML = `
+
+            <span>
+                ${item.name} × ${item.quantity}
+            </span>
+
+            <strong>
+                ₹${itemTotal}
+            </strong>
+
+        `;
 
 
-                    cart[index].quantity++;
+        checkoutItems.appendChild(checkoutItem);
+
+    });
 
 
-                    updateCart();
-
-                }
-            );
-
-        });
-
-
-
-    document
-        .querySelectorAll(".remove-item")
-        .forEach(function(button) {
-
-
-            button.addEventListener(
-                "click",
-                function() {
-
-
-                    const index =
-                        parseInt(
-                            button.dataset.index
-                        );
-
-
-                    cart.splice(index, 1);
-
-
-                    updateCart();
-
-                }
-            );
-
-        });
+    checkoutTotal.textContent =
+        "₹" + total;
 
 }
 
+
+/* CHECKOUT FORM */
+
+const checkoutForm =
+    document.getElementById("checkoutForm");
+
+
+checkoutForm.addEventListener("submit", function (event) {
+
+    event.preventDefault();
+
+
+    if (cart.length === 0) {
+
+        alert("Your cart is empty.");
+
+        return;
+
+    }
+
+
+    const name =
+        document.getElementById("customerName").value;
+
+
+    const payment =
+        document.querySelector(
+            'input[name="payment"]:checked'
+        ).value;
+
+
+    checkoutOverlay.style.display = "none";
+
+    closeCart();
+
+
+    alert(
+        "🎉 Order placed successfully!\n\n" +
+        "Thank you, " + name + "!\n" +
+        "Payment: " + payment
+    );
+
+
+    checkoutForm.reset();
+
+    startTracking();
+
+});
 
 
 /* =====================================================
-   CART OPEN / CLOSE
+   ORDER TRACKING
 ===================================================== */
 
-function openCart() {
+function startTracking() {
 
-    cartPanel.classList.add("active");
+    const steps = [
+        document.getElementById("step1"),
+        document.getElementById("step2"),
+        document.getElementById("step3"),
+        document.getElementById("step4")
+    ];
 
-    cartOverlay.classList.add("active");
+
+    const lines = [
+        document.getElementById("line1"),
+        document.getElementById("line2"),
+        document.getElementById("line3")
+    ];
+
+
+    const times = [
+        document.getElementById("time1"),
+        document.getElementById("time2"),
+        document.getElementById("time3"),
+        document.getElementById("time4")
+    ];
+
+
+    const message =
+        document.getElementById("trackingMessage");
+
+
+    steps.forEach(function (step, index) {
+
+        step.classList.remove("active");
+
+        step.classList.remove("completed");
+
+        times[index].textContent = "Waiting";
+
+    });
+
+
+    lines.forEach(function (line) {
+
+        line.classList.remove("completed");
+
+    });
+
+
+    steps[0].classList.add("active");
+
+    times[0].textContent = "Just now";
+
+    message.textContent =
+        "📋 Your order has been placed!";
+
+
+    /* PREPARING */
+
+    setTimeout(function () {
+
+        steps[0].classList.remove("active");
+
+        steps[0].classList.add("completed");
+
+        steps[1].classList.add("active");
+
+        lines[0].classList.add("completed");
+
+        times[1].textContent = "Preparing";
+
+        message.textContent =
+            "👨‍🍳 Restaurant is preparing your food!";
+
+    }, 4000);
+
+
+    /* ON THE WAY */
+
+    setTimeout(function () {
+
+        steps[1].classList.remove("active");
+
+        steps[1].classList.add("completed");
+
+        steps[2].classList.add("active");
+
+        lines[1].classList.add("completed");
+
+        times[2].textContent = "On the way";
+
+        message.textContent =
+            "🛵 Your order is on the way!";
+
+    }, 8000);
+
+
+    /* DELIVERED */
+
+    setTimeout(function () {
+
+        steps[2].classList.remove("active");
+
+        steps[2].classList.add("completed");
+
+        steps[3].classList.add("active");
+
+        steps[3].classList.add("completed");
+
+        lines[2].classList.add("completed");
+
+        times[3].textContent = "Delivered";
+
+        message.textContent =
+            "🏠 Your order has been delivered! Enjoy your meal!";
+
+    }, 12000);
+
+
+    document
+        .getElementById("tracking")
+        .scrollIntoView({
+            behavior: "smooth"
+        });
 
 }
-
-
-function closeCart() {
-
-    cartPanel.classList.remove("active");
-
-    cartOverlay.classList.remove("active");
-
-}
-
-
-cartButton.addEventListener(
-    "click",
-    openCart
-);
-
-
-closeCartButton.addEventListener(
-    "click",
-    closeCart
-);
-
-
-cartOverlay.addEventListener(
-    "click",
-    closeCart
-);
-
 
 
 /* =====================================================
@@ -386,389 +536,241 @@ const loginButton =
 const loginOverlay =
     document.querySelector(".login-overlay");
 
-const closeLoginButton =
+const closeLogin =
     document.querySelector(".close-login");
 
+
+loginButton.addEventListener("click", function () {
+
+    loginOverlay.style.display = "flex";
+
+});
+
+
+closeLogin.addEventListener("click", function () {
+
+    loginOverlay.style.display = "none";
+
+});
+
+
+/* LOGIN FORM */
+
 const loginForm =
-    document.querySelector("#loginForm");
+    document.getElementById("loginForm");
 
 
+loginForm.addEventListener("submit", function (event) {
 
-loginButton.addEventListener(
-    "click",
-    function() {
-
-        loginOverlay.classList.add("active");
-
-    }
-);
+    event.preventDefault();
 
 
-closeLoginButton.addEventListener(
-    "click",
-    function() {
-
-        loginOverlay.classList.remove("active");
-
-    }
-);
+    const email =
+        document.getElementById("email").value;
 
 
-loginOverlay.addEventListener(
-    "click",
-    function(event) {
-
-        if (event.target === loginOverlay) {
-
-            loginOverlay.classList.remove(
-                "active"
-            );
-
-        }
-
-    }
-);
+    alert(
+        "Welcome back! 👋\n\nLogged in as:\n" +
+        email
+    );
 
 
+    loginForm.reset();
 
-loginForm.addEventListener(
-    "submit",
-    function(event) {
+    loginOverlay.style.display = "none";
 
-        event.preventDefault();
-
-
-        const email =
-            document.querySelector("#email")
-            .value
-            .trim();
-
-
-        const password =
-            document.querySelector("#password")
-            .value;
-
-
-        const savedUser =
-            localStorage.getItem(
-                "foodExpressUser"
-            );
-
-
-        if (!savedUser) {
-
-            alert(
-                "No account found. Please sign up first."
-            );
-
-            return;
-
-        }
-
-
-        const user =
-            JSON.parse(savedUser);
-
-
-        if (
-            email === user.email &&
-            password === user.password
-        ) {
-
-            alert(
-                "Login successful! 🎉\n\n" +
-                "Welcome, " +
-                user.name +
-                "!"
-            );
-
-
-            loginOverlay.classList.remove(
-                "active"
-            );
-
-
-            loginForm.reset();
-
-        } else {
-
-            alert(
-                "Incorrect email or password! ❌"
-            );
-
-        }
-
-    }
-);
-
+});
 
 
 /* =====================================================
    SIGN UP
 ===================================================== */
 
-const signupLink =
-    document.querySelector(".signup-link");
-
 const signupOverlay =
     document.querySelector(".signup-overlay");
 
-const closeSignupButton =
-    document.querySelector(".close-signup");
+const signupLink =
+    document.querySelector(".signup-link");
 
-const signupForm =
-    document.querySelector("#signupForm");
+const closeSignup =
+    document.querySelector(".close-signup");
 
 const backToLogin =
     document.querySelector(".back-to-login");
 
 
+/* OPEN SIGNUP */
 
-signupLink.addEventListener(
-    "click",
-    function(event) {
+signupLink.addEventListener("click", function (event) {
 
-        event.preventDefault();
+    event.preventDefault();
 
-        loginOverlay.classList.remove(
-            "active"
-        );
+    loginOverlay.style.display = "none";
 
-        signupOverlay.classList.add(
-            "active"
-        );
+    signupOverlay.style.display = "flex";
 
-    }
-);
+});
 
 
-closeSignupButton.addEventListener(
-    "click",
-    function() {
+/* CLOSE SIGNUP */
 
-        signupOverlay.classList.remove(
-            "active"
-        );
+closeSignup.addEventListener("click", function () {
 
-    }
-);
+    signupOverlay.style.display = "none";
+
+});
 
 
-signupOverlay.addEventListener(
-    "click",
-    function(event) {
+/* BACK TO LOGIN */
 
-        if (event.target === signupOverlay) {
+backToLogin.addEventListener("click", function (event) {
 
-            signupOverlay.classList.remove(
-                "active"
-            );
+    event.preventDefault();
 
-        }
+    signupOverlay.style.display = "none";
 
-    }
-);
+    loginOverlay.style.display = "flex";
+
+});
 
 
+/* SIGNUP FORM */
 
-signupForm.addEventListener(
-    "submit",
-    function(event) {
-
-        event.preventDefault();
+const signupForm =
+    document.getElementById("signupForm");
 
 
-        const name =
-            document.querySelector("#signupName")
-            .value
-            .trim();
+signupForm.addEventListener("submit", function (event) {
+
+    event.preventDefault();
 
 
-        const email =
-            document.querySelector("#signupEmail")
-            .value
-            .trim();
+    const password =
+        document.getElementById("signupPassword").value;
 
 
-        const password =
-            document.querySelector("#signupPassword")
-            .value;
+    const confirmPassword =
+        document.getElementById("confirmPassword").value;
 
 
-        const confirmPassword =
-            document.querySelector("#confirmPassword")
-            .value;
+    if (password !== confirmPassword) {
 
+        alert("Passwords do not match!");
 
-        if (
-            password !== confirmPassword
-        ) {
-
-            alert(
-                "Passwords do not match! ❌"
-            );
-
-            return;
-
-        }
-
-
-        const existingUser =
-            localStorage.getItem(
-                "foodExpressUser"
-            );
-
-
-        if (existingUser) {
-
-            const user =
-                JSON.parse(existingUser);
-
-
-            if (user.email === email) {
-
-                alert(
-                    "An account with this email already exists! ❌"
-                );
-
-                return;
-
-            }
-
-        }
-
-
-        const user = {
-
-            name: name,
-
-            email: email,
-
-            password: password
-
-        };
-
-
-        localStorage.setItem(
-            "foodExpressUser",
-            JSON.stringify(user)
-        );
-
-
-        alert(
-            "Account created successfully! 🎉"
-        );
-
-
-        signupForm.reset();
-
-
-        signupOverlay.classList.remove(
-            "active"
-        );
-
-
-        loginOverlay.classList.add(
-            "active"
-        );
+        return;
 
     }
-);
 
 
-
-backToLogin.addEventListener(
-    "click",
-    function(event) {
-
-        event.preventDefault();
+    alert(
+        "🎉 Account created successfully!"
+    );
 
 
-        signupOverlay.classList.remove(
-            "active"
-        );
+    signupForm.reset();
 
+    signupOverlay.style.display = "none";
 
-        loginOverlay.classList.add(
-            "active"
-        );
-
-    }
-);
-
+});
 
 
 /* =====================================================
-   SEARCH
+   CATEGORY FILTER
 ===================================================== */
 
-const searchInput =
-    document.querySelector("#searchInput");
-
-const searchButton =
-    document.querySelector("#searchButton");
+const categoryCards =
+    document.querySelectorAll(".category-card");
 
 const productCards =
     document.querySelectorAll(".product-card");
 
-const restaurantCards =
-    document.querySelectorAll(".restaurant-card");
 
+categoryCards.forEach(function (category) {
+
+    category.addEventListener("click", function () {
+
+        categoryCards.forEach(function (card) {
+
+            card.classList.remove("selected");
+
+        });
+
+
+        category.classList.add("selected");
+
+
+        const selectedCategory =
+            category.getAttribute("data-category");
+
+
+        productCards.forEach(function (product) {
+
+            const productCategory =
+                product.getAttribute("data-category");
+
+
+            if (
+                selectedCategory === "all" ||
+                selectedCategory === productCategory
+            ) {
+
+                product.style.display = "block";
+
+            } else {
+
+                product.style.display = "none";
+
+            }
+
+        });
+
+
+        document
+            .getElementById("products")
+            .scrollIntoView({
+                behavior: "smooth"
+            });
+
+    });
+
+});
+
+
+/* =====================================================
+   FOOD SEARCH
+===================================================== */
+
+const searchInput =
+    document.getElementById("searchInput");
+
+const searchButton =
+    document.getElementById("searchButton");
 
 
 function searchFood() {
 
-
     const searchText =
         searchInput.value
-        .toLowerCase()
-        .trim();
+            .toLowerCase()
+            .trim();
 
 
+    productCards.forEach(function (product) {
 
-    productCards.forEach(function(card) {
-
-
-        const cardText =
-            card.textContent.toLowerCase();
-
-
-        if (
-            cardText.includes(searchText)
-        ) {
-
-            card.classList.remove(
-                "hide-food"
-            );
-
-        } else {
-
-            card.classList.add(
-                "hide-food"
-            );
-
-        }
-
-    });
-
-
-
-    restaurantCards.forEach(function(card) {
-
-
-        const cardText =
-            card.textContent.toLowerCase();
+        const productText =
+            product.textContent.toLowerCase();
 
 
         if (
-            cardText.includes(searchText)
+            searchText === "" ||
+            productText.includes(searchText)
         ) {
 
-            card.style.display = "";
+            product.style.display = "block";
 
         } else {
 
-            card.style.display = "none";
+            product.style.display = "none";
 
         }
 
@@ -784,125 +786,111 @@ searchButton.addEventListener(
 
 
 searchInput.addEventListener(
-    "input",
-    searchFood
+    "keypress",
+    function (event) {
+
+        if (event.key === "Enter") {
+
+            searchFood();
+
+        }
+
+    }
 );
 
 
-
 /* =====================================================
-   CATEGORY FILTER
+   HERO SEARCH
 ===================================================== */
 
-const categoryCards =
-    document.querySelectorAll(".category-card");
+const heroSearchInput =
+    document.getElementById("heroSearchInput");
+
+const heroSearchButton =
+    document.getElementById("heroSearchButton");
 
 
-categoryCards.forEach(function(categoryCard) {
+function heroSearch() {
+
+    const searchText =
+        heroSearchInput.value
+            .toLowerCase()
+            .trim();
 
 
-    categoryCard.addEventListener(
-        "click",
-        function() {
+    searchInput.value = searchText;
 
 
-            const selectedCategory =
-                categoryCard.dataset.category;
+    productCards.forEach(function (product) {
+
+        const productText =
+            product.textContent.toLowerCase();
 
 
-            categoryCards.forEach(
-                function(card) {
+        if (
+            searchText === "" ||
+            productText.includes(searchText)
+        ) {
 
-                    card.classList.remove(
-                        "selected"
-                    );
+            product.style.display = "block";
 
-                }
-            );
+        } else {
 
-
-            categoryCard.classList.add(
-                "selected"
-            );
-
-
-            productCards.forEach(
-                function(foodCard) {
-
-
-                    const foodCategory =
-                        foodCard.dataset.category;
-
-
-                    if (
-                        selectedCategory === "all" ||
-                        foodCategory === selectedCategory
-                    ) {
-
-                        foodCard.classList.remove(
-                            "hide-food"
-                        );
-
-                    } else {
-
-                        foodCard.classList.add(
-                            "hide-food"
-                        );
-
-                    }
-
-                }
-            );
-
-
-            document
-                .querySelector("#products")
-                .scrollIntoView({
-                    behavior: "smooth"
-                });
+            product.style.display = "none";
 
         }
-    );
 
-});
+    });
 
+
+    document
+        .getElementById("products")
+        .scrollIntoView({
+            behavior: "smooth"
+        });
+
+}
+
+
+heroSearchButton.addEventListener(
+    "click",
+    heroSearch
+);
+
+
+heroSearchInput.addEventListener(
+    "keypress",
+    function (event) {
+
+        if (event.key === "Enter") {
+
+            heroSearch();
+
+        }
+
+    }
+);
 
 
 /* =====================================================
-   CHECKOUT
+   LOCATION
 ===================================================== */
 
-const checkoutButton =
-    document.querySelector(".checkout-btn");
+const locationButton =
+    document.getElementById("locationButton");
 
-const checkoutOverlay =
-    document.querySelector(".checkout-overlay");
-
-const closeCheckoutButton =
-    document.querySelector(".close-checkout");
-
-const checkoutForm =
-    document.querySelector("#checkoutForm");
-
-const checkoutItems =
-    document.querySelector(".checkout-items");
-
-const checkoutTotal =
-    document.querySelector(
-        ".checkout-total strong"
-    );
+const locationInput =
+    document.getElementById("locationInput");
 
 
-
-checkoutButton.addEventListener(
+locationButton.addEventListener(
     "click",
-    function() {
+    function () {
 
-
-        if (cart.length === 0) {
+        if (!navigator.geolocation) {
 
             alert(
-                "Your cart is empty! 🛒"
+                "Geolocation is not supported by your browser."
             );
 
             return;
@@ -910,463 +898,51 @@ checkoutButton.addEventListener(
         }
 
 
-        updateCheckout();
+        locationButton.textContent =
+            "Getting Location...";
 
 
-        closeCart();
+        navigator.geolocation.getCurrentPosition(
+
+            function (position) {
+
+                const latitude =
+                    position.coords.latitude;
+
+                const longitude =
+                    position.coords.longitude;
 
 
-        checkoutOverlay.classList.add(
-            "active"
+                locationInput.value =
+                    "📍 Location detected (" +
+                    latitude.toFixed(4) +
+                    ", " +
+                    longitude.toFixed(4) +
+                    ")";
+
+
+                locationButton.textContent =
+                    "Location Added ✓";
+
+            },
+
+
+            function () {
+
+                alert(
+                    "Unable to access your location.\nPlease enter your location manually."
+                );
+
+
+                locationButton.textContent =
+                    "Use Current Location";
+
+            }
+
         );
 
     }
 );
-
-
-
-/* =====================================================
-   UPDATE CHECKOUT
-===================================================== */
-
-function updateCheckout() {
-
-
-    checkoutItems.innerHTML = "";
-
-    let total = 0;
-
-
-    cart.forEach(function(item) {
-
-
-        const subtotal =
-            item.price * item.quantity;
-
-
-        total += subtotal;
-
-
-        const checkoutItem =
-            document.createElement("div");
-
-
-        checkoutItem.className =
-            "checkout-item";
-
-
-        checkoutItem.innerHTML = `
-
-            <div>
-
-                <div class="checkout-item-name">
-
-                    ${item.image}
-                    ${item.name}
-
-                </div>
-
-
-                <div class="checkout-item-quantity">
-
-                    Quantity:
-                    ${item.quantity}
-
-                </div>
-
-            </div>
-
-
-            <div class="checkout-item-price">
-
-                ₹${subtotal}
-
-            </div>
-
-        `;
-
-
-        checkoutItems.appendChild(
-            checkoutItem
-        );
-
-    });
-
-
-    checkoutTotal.textContent =
-        `₹${total}`;
-
-}
-
-
-
-/* CLOSE CHECKOUT */
-
-closeCheckoutButton.addEventListener(
-    "click",
-    function() {
-
-        checkoutOverlay.classList.remove(
-            "active"
-        );
-
-    }
-);
-
-
-checkoutOverlay.addEventListener(
-    "click",
-    function(event) {
-
-        if (
-            event.target === checkoutOverlay
-        ) {
-
-            checkoutOverlay.classList.remove(
-                "active"
-            );
-
-        }
-
-    }
-);
-
-
-
-/* =====================================================
-   PLACE ORDER
-===================================================== */
-
-checkoutForm.addEventListener(
-    "submit",
-    function(event) {
-
-        event.preventDefault();
-
-
-        const name =
-            document.querySelector(
-                "#customerName"
-            ).value.trim();
-
-
-        const phone =
-            document.querySelector(
-                "#customerPhone"
-            ).value.trim();
-
-
-        const city =
-            document.querySelector(
-                "#city"
-            ).value.trim();
-
-
-        const payment =
-            document.querySelector(
-                'input[name="payment"]:checked'
-            ).value;
-
-
-
-        alert(
-
-            "🎉 Order placed successfully!\n\n" +
-
-            "Customer: " +
-            name +
-            "\n" +
-
-            "Phone: " +
-            phone +
-            "\n" +
-
-            "City: " +
-            city +
-            "\n" +
-
-            "Payment: " +
-            payment +
-            "\n\n" +
-
-            "Your food is being prepared! 🛵"
-
-        );
-
-
-        /* START TRACKING */
-
-        startOrderTracking();
-
-
-        /* CLEAR CART */
-
-        cart = [];
-
-        updateCart();
-
-
-        /* CLOSE CHECKOUT */
-
-        checkoutOverlay.classList.remove(
-            "active"
-        );
-
-
-        checkoutForm.reset();
-
-
-        /* SHOW TRACKING */
-
-        document
-            .querySelector("#tracking")
-            .scrollIntoView({
-                behavior: "smooth"
-            });
-
-    }
-);
-
-
-
-/* =====================================================
-   ORDER TRACKING
-===================================================== */
-
-let trackingTimers = [];
-
-
-function startOrderTracking() {
-
-
-    /* CLEAR OLD TIMERS */
-
-    trackingTimers.forEach(
-        function(timer) {
-
-            clearTimeout(timer);
-
-        }
-    );
-
-
-    trackingTimers = [];
-
-
-
-    const steps = [
-
-        document.querySelector("#step1"),
-
-        document.querySelector("#step2"),
-
-        document.querySelector("#step3"),
-
-        document.querySelector("#step4")
-
-    ];
-
-
-    const lines = [
-
-        document.querySelector("#line1"),
-
-        document.querySelector("#line2"),
-
-        document.querySelector("#line3")
-
-    ];
-
-
-    const times = [
-
-        document.querySelector("#time1"),
-
-        document.querySelector("#time2"),
-
-        document.querySelector("#time3"),
-
-        document.querySelector("#time4")
-
-    ];
-
-
-    const message =
-        document.querySelector(
-            "#trackingMessage"
-        );
-
-
-
-    /* RESET */
-
-    steps.forEach(function(step) {
-
-        step.classList.remove(
-            "active",
-            "completed"
-        );
-
-    });
-
-
-    lines.forEach(function(line) {
-
-        line.classList.remove(
-            "completed"
-        );
-
-    });
-
-
-
-    times[0].textContent =
-        "Completed ✓";
-
-    times[1].textContent =
-        "Waiting";
-
-    times[2].textContent =
-        "Waiting";
-
-    times[3].textContent =
-        "Waiting";
-
-
-
-    /* STEP 1 */
-
-    steps[0].classList.add(
-        "active"
-    );
-
-
-    message.textContent =
-        "📋 Your order has been placed!";
-
-
-
-    /* STEP 2 */
-
-    trackingTimers.push(
-
-        setTimeout(function() {
-
-
-            steps[0].classList.remove(
-                "active"
-            );
-
-            steps[0].classList.add(
-                "completed"
-            );
-
-
-            lines[0].classList.add(
-                "completed"
-            );
-
-
-            steps[1].classList.add(
-                "active"
-            );
-
-
-            times[1].textContent =
-                "Preparing now...";
-
-
-            message.textContent =
-                "👨‍🍳 Your food is being prepared!";
-
-
-        }, 5000)
-
-    );
-
-
-
-    /* STEP 3 */
-
-    trackingTimers.push(
-
-        setTimeout(function() {
-
-
-            steps[1].classList.remove(
-                "active"
-            );
-
-            steps[1].classList.add(
-                "completed"
-            );
-
-
-            lines[1].classList.add(
-                "completed"
-            );
-
-
-            steps[2].classList.add(
-                "active"
-            );
-
-
-            times[2].textContent =
-                "Delivery partner is on the way";
-
-
-            message.textContent =
-                "🛵 Your food is on the way!";
-
-
-        }, 10000)
-
-    );
-
-
-
-    /* STEP 4 */
-
-    trackingTimers.push(
-
-        setTimeout(function() {
-
-
-            steps[2].classList.remove(
-                "active"
-            );
-
-            steps[2].classList.add(
-                "completed"
-            );
-
-
-            lines[2].classList.add(
-                "completed"
-            );
-
-
-            steps[3].classList.add(
-                "active",
-                "completed"
-            );
-
-
-            times[3].textContent =
-                "Delivered ✓";
-
-
-            message.textContent =
-                "🏠 Your order has been delivered! Enjoy your meal! 😋";
-
-
-        }, 15000)
-
-    );
-
-}
-
 
 
 /* =====================================================
@@ -1379,10 +955,10 @@ const offerButton =
 
 offerButton.addEventListener(
     "click",
-    function() {
+    function () {
 
         document
-            .querySelector("#products")
+            .getElementById("products")
             .scrollIntoView({
                 behavior: "smooth"
             });
@@ -1391,14 +967,8 @@ offerButton.addEventListener(
 );
 
 
-
 /* =====================================================
-   START
+   INITIAL CART
 ===================================================== */
 
 updateCart();
-
-
-console.log(
-    "FoodExpress is working correctly! ✅"
-);
